@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android-slideshow.iml" filepath="$PROJECT_DIR$/.idea/modules/android-slideshow.iml" group="android-slideshow" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="android-slideshow/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/android-slideshow.iml" filepath="$PROJECT_DIR$/.idea/android-slideshow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android-slideshow.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android-slideshow.app.iml" />
     </modules>
   </component>
 </project>
