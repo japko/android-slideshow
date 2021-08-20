@@ -1,33 +1,23 @@
-package link.standen.michael.slideshow.dialog;
+package link.standen.michael.slideshow.dialog
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import android.view.LayoutInflater;
+import android.app.AlertDialog
+import android.app.Dialog
+import android.os.Bundle
+import android.view.LayoutInflater
+import link.standen.michael.slideshow.R
+import android.content.DialogInterface
+import androidx.fragment.app.DialogFragment
+import link.standen.michael.slideshow.dialog.ControlsDialog
 
-import link.standen.michael.slideshow.R;
+class ControlsDialog : DialogFragment() {
 
-public class ControlsDialog extends DialogFragment {
-
-	public static final String TAG = ControlsDialog.class.getName();
-
-	@NonNull
-	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		AlertDialog.Builder bob = new AlertDialog.Builder(getActivity());
-		LayoutInflater inflater = getActivity().getLayoutInflater();
-
-		bob.setView(inflater.inflate(R.layout.dialog_controls, null))
-				.setPositiveButton(R.string.changelog_ok_button, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						ControlsDialog.this.getDialog().cancel();
-					}
-				});
-
-		return bob.create();
-	}
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val bob = AlertDialog.Builder(activity)
+        val inflater = requireActivity().layoutInflater
+        bob.setView(inflater.inflate(R.layout.dialog_controls, null))
+            .setPositiveButton(R.string.changelog_ok_button) { dialog: DialogInterface?, _: Int ->
+                dialog?.cancel()
+            }
+        return bob.create()
+    }
 }

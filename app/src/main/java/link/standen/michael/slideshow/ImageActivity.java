@@ -36,14 +36,13 @@ import link.standen.michael.slideshow.strategy.image.CustomImageStrategy;
 import link.standen.michael.slideshow.strategy.image.GlideImageStrategy;
 import link.standen.michael.slideshow.strategy.image.ImageStrategy;
 import link.standen.michael.slideshow.util.FileItemHelper;
+import timber.log.Timber;
 
 /**
  * A full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class ImageActivity extends BaseActivity implements ImageStrategy.ImageStrategyCallback {
-
-	private static final String TAG = ImageActivity.class.getName();
 
 	private boolean blockPreferenceReload = false;
 
@@ -292,7 +291,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		currentPath = getIntent().getStringExtra("currentPath");
 		String imagePath = getIntent().getStringExtra("imagePath");
 		boolean autoStart = getIntent().getBooleanExtra("autoStart", false);
-		Log.i(TAG, String.format("Starting slideshow at %s %s", currentPath, imagePath));
+		Timber.i("Starting slideshow at %s %s", currentPath, imagePath);
 		// Save the starting values
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putString("remembered_location", currentPath);
@@ -303,7 +302,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		fileList = new FileItemHelper(this).getFileList(currentPath, false, imagePath == null);
 		if (fileList.size() == 0){
 			// No files to view. Exit
-			Log.i(TAG, "No files in list.");
+			Timber.i("No files in list.");
 			Toast.makeText(this, R.string.toast_no_files, Toast.LENGTH_SHORT).show();
 			onBackPressed();
 			return;
@@ -316,7 +315,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		if (autoStart){
 			// Auto start from last image
 			imagePath = preferences.getString("remembered_image_current", null);
-			Log.d(TAG, String.format("Remembered start location: %s", imagePath));
+			Timber.d("Remembered start location: %s", imagePath);
 		}
 		// Find the selected image position
 		if (imagePath == null) {
@@ -332,8 +331,8 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		}
 		firstImagePosition = imagePosition;
 
-		Log.v(TAG, String.format("First item is at index: %s", imagePosition));
-		Log.v(TAG, String.format("File list has size of: %s", fileList.size()));
+		Timber.v(String.format("First item is at index: %s", imagePosition));
+		Timber.v(String.format("File list has size of: %s", fileList.size()));
 
 		// Show the first image
 		loadImage(imagePosition, false);
@@ -436,32 +435,32 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	private void loadPreferences(){
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		// Load preferences
-		Log.d(TAG, "Loaded preferences:");
+		Timber.d("Loaded preferences:");
 		SLIDESHOW_DELAY = (int) (Float.parseFloat(preferences.getString("slide_delay", "3")) * 1000);
-		Log.d(TAG, String.format("SLIDESHOW_DELAY: %d", SLIDESHOW_DELAY));
+		Timber.d(String.format("SLIDESHOW_DELAY: %d", SLIDESHOW_DELAY));
 		REVERSE_ORDER = preferences.getBoolean("reverse_order", false);
-		Log.d(TAG, String.format("REVERSE_ORDER: %b", REVERSE_ORDER));
+		Timber.d(String.format("REVERSE_ORDER: %b", REVERSE_ORDER));
 		RANDOM_ORDER = preferences.getBoolean("random_order", false);
-		Log.d(TAG, String.format("RANDOM_ORDER: %b", RANDOM_ORDER));
+		Timber.d(String.format("RANDOM_ORDER: %b", RANDOM_ORDER));
 		REFRESH_FOLDER = preferences.getBoolean("refresh_folder", false);
-		Log.d(TAG, String.format("REFRESH_FOLDER: %b", REFRESH_FOLDER));
+		Timber.d(String.format("REFRESH_FOLDER: %b", REFRESH_FOLDER));
 		IMAGE_DETAILS = preferences.getBoolean("image_details", false);
-		Log.d(TAG, String.format("IMAGE_DETAILS: %b", IMAGE_DETAILS));
+		Timber.d(String.format("IMAGE_DETAILS: %b", IMAGE_DETAILS));
 		IMAGE_DETAILS_DURING = preferences.getBoolean("image_details_during", false);
-		Log.d(TAG, String.format("IMAGE_DETAILS_DURING: %b", IMAGE_DETAILS_DURING));
+		Timber.d(String.format("IMAGE_DETAILS_DURING: %b", IMAGE_DETAILS_DURING));
 		SKIP_LONG_LOAD = preferences.getBoolean("skip_long_load", false);
-		Log.d(TAG, String.format("SKIP_LONG_LOAD: %b", SKIP_LONG_LOAD));
+		Timber.d(String.format("SKIP_LONG_LOAD: %b", SKIP_LONG_LOAD));
 		PRELOAD_IMAGES = preferences.getBoolean("preload_images", true);
-		Log.d(TAG, String.format("PRELOAD_IMAGES: %b", PRELOAD_IMAGES));
+		Timber.d(String.format("PRELOAD_IMAGES: %b", PRELOAD_IMAGES));
 		DELETE_WARNING = preferences.getBoolean("delete_warning", true);
-		Log.d(TAG, String.format("DELETE_WARNING: %b", DELETE_WARNING));
+		Timber.d(String.format("DELETE_WARNING: %b", DELETE_WARNING));
 		// List prefs
 		int action_on_complete = Arrays.asList(getResources().getStringArray(R.array.pref_list_values_action_on_complete)).indexOf(
 				preferences.getString("action_on_complete", getResources().getString(R.string.pref_default_value_action_on_complete)));
 		STOP_ON_COMPLETE = action_on_complete == 1;
-		Log.d(TAG, String.format("STOP_ON_COMPLETE: %b", STOP_ON_COMPLETE));
+		Timber.d(String.format("STOP_ON_COMPLETE: %b", STOP_ON_COMPLETE));
 		PAUSE_ON_COMPLETE = action_on_complete == 2;
-		Log.d(TAG, String.format("STOP_ON_COMPLETE: %b", PAUSE_ON_COMPLETE));
+		Timber.d(String.format("STOP_ON_COMPLETE: %b", PAUSE_ON_COMPLETE));
 
 		// Show/Hide the image details that are shown during pause
 		if (!IMAGE_DETAILS){
@@ -473,10 +472,10 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		// Set the image strategy.
 		if (preferences.getBoolean("glide_image_strategy", true)){
 			imageStrategy = new GlideImageStrategy();
-			Log.d(TAG, "Glide image strategy");
+			Timber.d("Glide image strategy");
 		} else {
 			imageStrategy = new CustomImageStrategy();
-			Log.d(TAG, "Custom image strategy");
+			Timber.d("Custom image strategy");
 		}
 		imageStrategy.setContext(this);
 		imageStrategy.setCallback(this);
@@ -639,24 +638,24 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		}
 		((TextView)findViewById(R.id.image_detail_location1)).setText(location);
 		((TextView)findViewById(R.id.image_detail_location2)).setText(location);
-		Log.d(TAG, String.format("Current image location: %s", location));
+		Timber.d(String.format("Current image location: %s", location));
 		// Dimensions
 		String dimensions = getResources().getString(R.string.image_detail_dimensions, width, height);
 		((TextView)findViewById(R.id.image_detail_dimensions1)).setText(dimensions);
 		((TextView)findViewById(R.id.image_detail_dimensions2)).setText(dimensions);
-		Log.d(TAG, String.format("Current image dimensions: %s", dimensions));
+		Timber.d(String.format("Current image dimensions: %s", dimensions));
 		// Size
 		String size = getResources().getString(R.string.image_detail_size,
 				Formatter.formatShortFileSize(this, file.length()));
 		((TextView)findViewById(R.id.image_detail_size1)).setText(size);
 		((TextView)findViewById(R.id.image_detail_size2)).setText(size);
-		Log.d(TAG, String.format("Current image size: %s", size));
+		Timber.d(String.format("Current image size: %s", size));
 		// Modified
 		String modified = getResources().getString(R.string.image_detail_modified,
 				DateFormat.getMediumDateFormat(this).format(file.lastModified()));
 		((TextView)findViewById(R.id.image_detail_modified1)).setText(modified);
 		((TextView)findViewById(R.id.image_detail_modified2)).setText(modified);
-		Log.d(TAG, String.format("Current image modified: %s", modified));
+		Timber.d(String.format("Current image modified: %s", modified));
 
 		// Save this spot
 		saveCurrentImagePath();
@@ -717,7 +716,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 				getApplicationContext().getPackageName() + ".provider",
 				new File(item.getPath())));
 		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		Log.d(TAG, String.format("Sharing image at %s of type %s", item.getPath(), mime));
+		Timber.d(String.format("Sharing image at %s of type %s", item.getPath(), mime));
 		startActivity(Intent.createChooser(intent, getResources().getString(R.string.share_via)));
 	}
 
@@ -846,15 +845,15 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	private boolean isStoragePermissionGranted() {
 		if (Build.VERSION.SDK_INT >= 23) {
 			if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-				Log.v(TAG,"Permission is granted");
+				Timber.v("Permission is granted");
 				return true;
 			} else {
-				Log.v(TAG,"Permission is revoked");
+				Timber.v("Permission is revoked");
 				requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 				return false;
 			}
 		} else { //permission is automatically granted on sdk<23 upon installation
-			Log.v(TAG,"Permission is granted");
+			Timber.v("Permission is granted");
 			return true;
 		}
 	}
@@ -865,7 +864,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-		Log.v(TAG,"Permission: " + permissions[0] + " was " + grantResults[0]);
+		Timber.v("Permission: " + permissions[0] + " was " + grantResults[0]);
 		if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
 			deleteImage();
 		}

@@ -22,13 +22,12 @@ import link.standen.michael.slideshow.adapter.FileItemArrayAdapter;
 import link.standen.michael.slideshow.model.FileItem;
 import link.standen.michael.slideshow.model.FileItemViewHolder;
 import link.standen.michael.slideshow.util.FileItemHelper;
+import timber.log.Timber;
 
 /**
  * Slideshow main activity.
  */
 public class MainActivity extends BaseActivity {
-
-	private static final String TAG = MainActivity.class.getName();
 
 	private String rootLocation;
 
@@ -68,8 +67,6 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-
-		showChangeLog(false);
 
 		// Permission check
 		if (isStoragePermissionGranted()){
@@ -164,7 +161,7 @@ public class MainActivity extends BaseActivity {
 	 * @param filePath The file path
 	 */
 	private void startSlideshowAt(String folderPath, String filePath, boolean autoStart){
-		Log.i(TAG, String.format("Calling slideshow at %s %s", folderPath, filePath));
+		Timber.i(String.format("Calling slideshow at %s %s", folderPath, filePath));
 		Intent intent = new Intent(MainActivity.this, ImageActivity.class);
 		intent.putExtra("currentPath", folderPath);
 		intent.putExtra("imagePath", filePath);
@@ -191,16 +188,16 @@ public class MainActivity extends BaseActivity {
 	private boolean isStoragePermissionGranted() {
 		if (Build.VERSION.SDK_INT >= 23) {
 			if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-				Log.v(TAG,"Permission is granted");
+				Timber.v("Permission is granted");
 				return true;
 			} else {
-				Log.v(TAG,"Permission is revoked");
+				Timber.v("Permission is revoked");
 				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
 				return false;
 			}
 		} else {
 			// Permission is automatically granted on sdk<23 upon installation
-			Log.v(TAG,"Permission is granted");
+			Timber.v("Permission is granted");
 			return true;
 		}
 	}
@@ -212,7 +209,7 @@ public class MainActivity extends BaseActivity {
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		if (permissions.length > 0) {
-			Log.v(TAG, "Permission: " + permissions[0] + " was " + grantResults[0]);
+			Timber.v("Permission: " + permissions[0] + " was " + grantResults[0]);
 			if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 				updateListView();
 			}

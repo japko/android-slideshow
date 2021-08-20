@@ -7,6 +7,8 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import timber.log.Timber;
+
 public class CustomRotateDimenTransformation {
 
 	private static final String TAG = CustomRotateDimenTransformation.class.getName();
@@ -25,11 +27,11 @@ public class CustomRotateDimenTransformation {
 		try {
 			ExifInterface exif = new ExifInterface(filename);
 			int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-			Log.d(TAG, "File " + filename + " has EXIF orientation " + orientation);
+            Timber.d("File " + filename + " has EXIF orientation " + orientation);
 
 			return EXIF_ORIENTATION_TO_ROTATION[orientation];
 		} catch (IOException e) {
-			Log.e(TAG, "EXIF data for file " + filename + " failed to load.");
+			Timber.e("EXIF data for file " + filename + " failed to load.");
 			return -1;
 		}
 	}

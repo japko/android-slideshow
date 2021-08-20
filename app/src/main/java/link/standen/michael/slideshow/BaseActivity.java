@@ -74,14 +74,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 			intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
 			startActivity(intent);
 			return true;
-		} else if (id == R.id.action_credits) {
-			startActivity(new Intent(this, CreditsActivity.class));
-			return true;
-		} else if (id == R.id.action_change_log) {
-			showChangeLog(true);
-			return true;
 		} else if (id == R.id.action_controls) {
-			new ControlsDialog().show(getSupportFragmentManager(), ControlsDialog.TAG);
+			new ControlsDialog().show(getSupportFragmentManager(), null);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -96,49 +90,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}
 		return Environment.getExternalStorageDirectory().getAbsolutePath();
 	}
-
-	/**
-	 * Show the change log.
-	 * Shows the full change log when nothing is in "What's New" log. Shows "What's New" log otherwise.
-	 * @param force Force the change log to be displayed, if false only displayed if new content.
-	 */
-	void showChangeLog(boolean force) {
-		// Only show if forced or in English, as change log is only in English
-		if ((isEnglish() || force) && changeLog == null) {
-			final ChangeLog cl = new ChangeLog(this, CHANGE_LOG_CSS);
-			if (force || cl.isFirstRun()) {
-				if (cl.getChangeLog(false).size() == 0) {
-					// Force the display of the full dialog list.
-					changeLog = cl.getFullLogDialog();
-				} else {
-					// Show only the new stuff.
-					changeLog = cl.getLogDialog();
-				}
-				changeLog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-					@Override
-					public void onDismiss(DialogInterface dialogInterface) {
-						changeLog = null;
-					}
-				});
-				changeLog.show();
-			}
-		}
-	}
-
-	/**
-	 * Check application is running in English.
-	 */
-	private boolean isEnglish(){
-		Locale locale;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-			locale = getResources().getConfiguration().getLocales().get(0);
-		} else {
-			//noinspection deprecation
-			locale = getResources().getConfiguration().locale;
-		}
-		return locale.getLanguage().equals(DEFAULT_LANGUAGE);
-	}
-
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {

@@ -15,6 +15,7 @@ import java.util.List;
 
 import link.standen.michael.slideshow.R;
 import link.standen.michael.slideshow.model.FileItem;
+import timber.log.Timber;
 
 public class FileItemHelper {
 
@@ -43,7 +44,7 @@ public class FileItemHelper {
      */
     public List<FileItem> getFileList(@NonNull String currentPath, boolean includeDirectories,
 			boolean includeSubDirectories){
-        Log.d(TAG, "updateFileList currentPath: "+currentPath);
+        Timber.d("updateFileList currentPath: " + currentPath);
 
         // Create file list
         List<FileItem> fileList = new ArrayList<>();

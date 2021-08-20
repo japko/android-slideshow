@@ -11,6 +11,7 @@ import javax.microedition.khronos.opengles.GL11;
 
 import link.standen.michael.slideshow.model.FileItem;
 import link.standen.michael.slideshow.strategy.image.custom.CustomRotateDimenTransformation;
+import timber.log.Timber;
 
 /**
  * A strategy for loading images that was taken from Google's Camera2 app.
@@ -74,7 +75,7 @@ public class CustomImageStrategy implements ImageStrategy {
 		Bitmap image = BitmapFactory.decodeFile(item.getPath(), options);
 
 		if (image == null) {
-			Log.e(TAG, "Error loading image");
+            Timber.e("Error loading image");
 		} else {
             // calculate degrees to rotate
             int degrees = CustomRotateDimenTransformation.getRotationFromExif(item.getPath());
