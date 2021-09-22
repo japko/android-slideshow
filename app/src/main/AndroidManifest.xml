@@ -42,7 +42,8 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_settings"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

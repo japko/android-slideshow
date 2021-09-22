@@ -15,7 +15,7 @@ class ControlsDialog : DialogFragment() {
         val bob = AlertDialog.Builder(activity)
         val inflater = requireActivity().layoutInflater
         bob.setView(inflater.inflate(R.layout.dialog_controls, null))
-            .setPositiveButton(R.string.changelog_ok_button) { dialog: DialogInterface?, _: Int ->
+            .setPositiveButton(android.R.string.ok) { dialog: DialogInterface?, _: Int ->
                 dialog?.cancel()
             }
         return bob.create()

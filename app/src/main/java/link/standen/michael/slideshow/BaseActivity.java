@@ -1,22 +1,18 @@
 package link.standen.michael.slideshow;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import de.cketti.library.changelog.ChangeLog;
 import link.standen.michael.slideshow.dialog.ControlsDialog;
 import link.standen.michael.slideshow.model.FileItem;
 
@@ -27,15 +23,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	String currentPath;
 	List<FileItem> fileList = new ArrayList<>();
-	private Dialog changeLog;
 
 	static final String STATE_PATH = "pathState";
-
-	private static final String CHANGE_LOG_CSS = "body { padding: 0.8em; } " +
-			"h1 { margin-left: 0px; font-size: 1.2em; } " +
-			"ul { padding-left: 1.2em; } " +
-			"li { margin-left: 0px; }";
-	private static final String DEFAULT_LANGUAGE = new Locale("en").getLanguage();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 			onBackPressed();
 			return true;
 		} else if (id == R.id.action_settings) {
-			Intent intent = new Intent(this, SettingsActivity.class);
-			intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.SlideshowPreferenceFragment.class.getName());
-			intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
-			startActivity(intent);
+			startSettingsActivity();
 			return true;
 		} else if (id == R.id.action_controls) {
 			new ControlsDialog().show(getSupportFragmentManager(), null);
@@ -89,6 +75,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 			return "";
 		}
 		return Environment.getExternalStorageDirectory().getAbsolutePath();
+	}
+
+	public void startSettingsActivity() {
+		Intent intent = new Intent(this, SettingsActivity.class);
+		intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.SlideshowPreferenceFragment.class.getName());
+		intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+		startActivity(intent);
 	}
 
 	@Override

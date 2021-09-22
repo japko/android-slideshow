@@ -3,28 +3,27 @@ package link.standen.michael.slideshow;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.ActionBar;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.appcompat.app.AlertDialog;
+import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.util.Arrays;
@@ -270,22 +269,14 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		});
 
 		// Configure delete button
-		findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (isStoragePermissionGranted()) {
-					deleteImage();
-				}
+		findViewById(R.id.delete_button).setOnClickListener(v -> {
+			if (isStoragePermissionGranted()) {
+				deleteImage();
 			}
 		});
 
 		// Configure the share button
-		findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				shareImage();
-			}
-		});
+		findViewById(R.id.btn_settings).setOnClickListener(v -> startSettingsActivity());
 
 		// Get starting values
 		currentPath = getIntent().getStringExtra("currentPath");
@@ -702,22 +693,6 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		} else {
 			Toast.makeText(ImageActivity.this, R.string.image_not_deleted, Toast.LENGTH_SHORT).show();
 		}
-	}
-
-	/**
-	 * Share the current image
-	 */
-	private void shareImage(){
-		FileItem item = fileList.get(imagePosition);
-		Intent intent = new Intent(Intent.ACTION_SEND);
-		String mime = new FileItemHelper(this).getImageMimeType(item);
-		intent.setType(mime);
-		intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(this,
-				getApplicationContext().getPackageName() + ".provider",
-				new File(item.getPath())));
-		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		Timber.d(String.format("Sharing image at %s of type %s", item.getPath(), mime));
-		startActivity(Intent.createChooser(intent, getResources().getString(R.string.share_via)));
 	}
 
 	@Override

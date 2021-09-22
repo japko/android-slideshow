@@ -1,191 +1,139 @@
-package link.standen.michael.slideshow;
+package link.standen.michael.slideshow
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.res.Configuration;
-import android.os.Build;
-import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.SwitchPreference;
-import androidx.appcompat.app.ActionBar;
-import android.preference.PreferenceFragment;
-import android.view.MenuItem;
+import android.os.Bundle
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.*
 
 /**
- * A {@link PreferenceActivity} that presents a set of application settings. On
+ * A [PreferenceActivity] that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
  * settings are split by category, with category headers shown to the left of
  * the list of settings.
- * <p>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
+ *
+ *
+ * See [
+ * Android Design: Settings](http://developer.android.com/design/patterns/settings.html) for design guidelines and the [Settings
+ * API Guide](http://developer.android.com/guide/topics/ui/settings.html) for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity {
-	/**
-	 * A preference value change listener that updates the preference's summary
-	 * to reflect its new value.
-	 */
-	private final static Preference.OnPreferenceChangeListener listSummaryListener = new Preference.OnPreferenceChangeListener() {
-		@Override
-		public boolean onPreferenceChange(Preference preference, Object value) {
-			String stringValue = value.toString();
 
-			if (preference instanceof ListPreference) {
-				// For list preferences, look up the correct display value in
-				// the preference's 'entries' list.
-				ListPreference listPreference = (ListPreference) preference;
-				int index = listPreference.findIndexOfValue(stringValue);
+class SettingsActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_settings)
 
-				// Set the summary to reflect the new value.
-				preference.setSummary(
-						index >= 0
-								? listPreference.getEntries()[index]
-								: null);
-			} else {
-				// For all other preferences, set the summary to the value's
-				// simple string representation.
-				preference.setSummary(stringValue);
-			}
-			return true;
-		}
-	};
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-	/**
-	 * Helper method to determine if the device has an extra-large screen. For
-	 * example, 10" tablets are extra-large.
-	 */
-	private static boolean isXLargeTablet(Context context) {
-		return (context.getResources().getConfiguration().screenLayout
-				& Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-	}
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.frame_fragment, SlideshowPreferenceFragment())
+            .commit()
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setupActionBar();
-	}
+    }
 
-	/**
-	 * Set up the {@link android.app.ActionBar}, if the API is available.
-	 */
-	private void setupActionBar() {
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			// Show the Up button in the action bar.
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
-	}
+    /**
+     * This fragment shows general preferences only.
+     */
+    class SlideshowPreferenceFragment : PreferenceFragmentCompat() {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean onIsMultiPane() {
-		return isXLargeTablet(this);
-	}
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 
-	/**
-	 * This method stops fragment injection in malicious applications.
-	 * Make sure to deny any unknown fragments here.
-	 */
-	protected boolean isValidFragment(String fragmentName) {
-		return PreferenceFragment.class.getName().equals(fragmentName)
-				|| SlideshowPreferenceFragment.class.getName().equals(fragmentName);
-	}
+            addPreferencesFromResource(R.xml.preferences)
 
-	/**
-	 * This fragment shows general preferences only.
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public static class SlideshowPreferenceFragment extends PreferenceFragment {
-		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			addPreferencesFromResource(R.xml.preferences);
-			setHasOptionsMenu(true);
+            val reverseOrderPref = findPreference<SwitchPreference>("reverse_order")
+            val randomOrderPref = findPreference<SwitchPreference>("random_order")
+            // Enabling reverse disables random
+            reverseOrderPref?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    if (java.lang.Boolean.TRUE == newValue) {
+                        randomOrderPref?.isChecked = false
+                    }
+                    true
+                }
+            // Enabling random disables reverse
+            randomOrderPref?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    if (java.lang.Boolean.TRUE == newValue) {
+                        reverseOrderPref?.isChecked = false
+                    }
+                    true
+                }
+            val rememberLocationPref = findPreference<SwitchPreference>("remember_location")
+            val autoStartPref = findPreference<SwitchPreference>("auto_start")
+            // Disabling remember location disables auto start
+            rememberLocationPref?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    if (java.lang.Boolean.FALSE == newValue) {
+                        autoStartPref?.isChecked = false
+                    }
+                    true
+                }
+            val glideSupportPref = findPreference<SwitchPreference>("glide_image_strategy")
+            val preloadPref = findPreference<SwitchPreference>("preload_images")
+            val gifPref = findPreference<SwitchPreference>("enable_gif_support")
+            // Disabling glide support disables preloading and GIF support
+            glideSupportPref?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    if (java.lang.Boolean.FALSE == newValue) {
+                        preloadPref?.isChecked = false
+                        gifPref?.isChecked = false
+                    }
+                    true
+                }
+            val imageDetailsPref = findPreference<SwitchPreference>("image_details")
+            val imageDetailsDuringPref = findPreference<SwitchPreference>("image_details_during")
+            // Disabling remember location disables auto start
+            imageDetailsPref?.onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { preference, newValue ->
+                    if (java.lang.Boolean.FALSE == newValue) {
+                        imageDetailsDuringPref?.isChecked = false
+                    }
+                    true
+                }
 
-			final SwitchPreference reverseOrderPref = (SwitchPreference)findPreference("reverse_order");
-			final SwitchPreference randomOrderPref = (SwitchPreference)findPreference("random_order");
-			// Enabling reverse disables random
-			reverseOrderPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-				@Override
-				public boolean onPreferenceChange(Preference preference, Object newValue) {
-					if (Boolean.TRUE.equals(newValue)){
-						randomOrderPref.setChecked(false);
-					}
-					return true;
-				}
-			});
-			// Enabling random disables reverse
-			randomOrderPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-				@Override
-				public boolean onPreferenceChange(Preference preference, Object newValue) {
-					if (Boolean.TRUE.equals(newValue)){
-						reverseOrderPref.setChecked(false);
-					}
-					return true;
-				}
-			});
+            // Bind the summaries of List Preferences
+            val onCompletePref = findPreference<ListPreference>("action_on_complete")
+            onCompletePref?.onPreferenceChangeListener = listSummaryListener
+            listSummaryListener.onPreferenceChange(onCompletePref, onCompletePref?.value)
+        }
 
-			final SwitchPreference rememberLocationPref = (SwitchPreference)findPreference("remember_location");
-			final SwitchPreference autoStartPref = (SwitchPreference)findPreference("auto_start");
-			// Disabling remember location disables auto start
-			rememberLocationPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-				@Override
-				public boolean onPreferenceChange(Preference preference, Object newValue) {
-					if (Boolean.FALSE.equals(newValue)){
-						autoStartPref.setChecked(false);
-					}
-					return true;
-				}
-			});
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                requireActivity().onBackPressed()
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
 
-			final SwitchPreference glideSupportPref = (SwitchPreference)findPreference("glide_image_strategy");
-			final SwitchPreference preloadPref = (SwitchPreference)findPreference("preload_images");
-			final SwitchPreference gifPref = (SwitchPreference)findPreference("enable_gif_support");
-			// Disabling glide support disables preloading and GIF support
-			glideSupportPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-				@Override
-				public boolean onPreferenceChange(Preference preference, Object newValue) {
-					if (Boolean.FALSE.equals(newValue)){
-						preloadPref.setChecked(false);
-						gifPref.setChecked(false);
-					}
-					return true;
-				}
-			});
+    }
 
-			final SwitchPreference imageDetailsPref = (SwitchPreference)findPreference("image_details");
-			final SwitchPreference imageDetailsDuringPref = (SwitchPreference)findPreference("image_details_during");
-			// Disabling remember location disables auto start
-			imageDetailsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-				@Override
-				public boolean onPreferenceChange(Preference preference, Object newValue) {
-					if (Boolean.FALSE.equals(newValue)){
-						imageDetailsDuringPref.setChecked(false);
-					}
-					return true;
-				}
-			});
+    companion object {
+        /**
+         * A preference value change listener that updates the preference's summary
+         * to reflect its new value.
+         */
+        private val listSummaryListener =
+            Preference.OnPreferenceChangeListener { preference, value ->
+                val stringValue = value.toString()
+                if (preference is ListPreference) {
+                    // For list preferences, look up the correct display value in
+                    // the preference's 'entries' list.
+                    val listPreference = preference
+                    val index = listPreference.findIndexOfValue(stringValue)
 
-			// Bind the summaries of List Preferences
-			ListPreference onCompletePref = (ListPreference)findPreference("action_on_complete");
-			onCompletePref.setOnPreferenceChangeListener(listSummaryListener);
-			listSummaryListener.onPreferenceChange(onCompletePref, onCompletePref.getValue());
-		}
+                    // Set the summary to reflect the new value.
+                    preference.setSummary(
+                        if (index >= 0) listPreference.entries[index] else null
+                    )
+                } else {
+                    // For all other preferences, set the summary to the value's
+                    // simple string representation.
+                    preference.summary = stringValue
+                }
+                true
+            }
 
-		@Override
-		public boolean onOptionsItemSelected(MenuItem item) {
-			int id = item.getItemId();
-			if (id == android.R.id.home) {
-				getActivity().onBackPressed();
-				return true;
-			}
-			return super.onOptionsItemSelected(item);
-		}
-	}
+    }
 }

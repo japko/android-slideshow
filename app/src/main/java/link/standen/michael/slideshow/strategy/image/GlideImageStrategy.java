@@ -3,7 +3,6 @@ package link.standen.michael.slideshow.strategy.image;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -19,17 +18,16 @@ import com.bumptech.glide.request.target.Target;
 import link.standen.michael.slideshow.R;
 import link.standen.michael.slideshow.model.FileItem;
 import link.standen.michael.slideshow.strategy.image.glide.GlideRotateDimenTransformation;
+import link.standen.michael.slideshow.util.CropSidesTransformation;
 import timber.log.Timber;
 
 public class GlideImageStrategy implements ImageStrategy {
 
-    private static final String TAG = GlideImageStrategy.class.getName();
-
 	private Context context;
 	private ImageStrategyCallback callback;
 
-	private static boolean PLAY_GIF;
 	private static boolean AUTO_ROTATE_DIMEN;
+	private static boolean CROP_IMAGE_SIDES;
 
 	@Override
 	public void setContext(Context context) {
@@ -43,11 +41,6 @@ public class GlideImageStrategy implements ImageStrategy {
 
 	@Override
 	public void preload(final FileItem item) {
-
-		if (PLAY_GIF) {
-			return;
-		}
-
 		Glide.with(context)
 			.asBitmap()
 			.load(item.getPath()).preload();
@@ -61,14 +54,14 @@ public class GlideImageStrategy implements ImageStrategy {
 				.dontAnimate()
 				.placeholder(view.getDrawable());
 
-		if (PLAY_GIF) {
-			return;
-		}
-
 		if (AUTO_ROTATE_DIMEN) {
 			requestOptions = requestOptions.transform(new GlideRotateDimenTransformation());
 		} else {
 			requestOptions = requestOptions.fitCenter();
+		}
+
+		if(CROP_IMAGE_SIDES) {
+			requestOptions = requestOptions.transform(new CropSidesTransformation(view.getWidth(), view.getHeight()));
 		}
 
 		Glide.with(context)
@@ -101,7 +94,7 @@ public class GlideImageStrategy implements ImageStrategy {
 
 	@Override
 	public void loadPreferences(SharedPreferences preferences) {
-		PLAY_GIF = false;
 		AUTO_ROTATE_DIMEN = preferences.getBoolean("auto_rotate_dimen", false);
+		CROP_IMAGE_SIDES = preferences.getBoolean("crop_image_sides", false);
 	}
 }

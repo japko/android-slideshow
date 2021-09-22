@@ -5,6 +5,10 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:paddingStart="@dimen/left_pipo"
+	android:paddingEnd="@dimen/right_pipo"
+	android:paddingTop="@dimen/top_pipo"
+	android:paddingBottom="@dimen/down_pipo"
 	android:fitsSystemWindows="true"
 	tools:context="link.standen.michael.slideshow.MainActivity">
 

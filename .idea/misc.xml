@@ -4,9 +4,15 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/activity_credits.xml" value="0.20104166666666667" />
+        <entry key="app/src/main/res/layout/activity_frame.xml" value="0.30364583333333334" />
         <entry key="app/src/main/res/layout/activity_image.xml" value="0.5463541666666667" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.32708333333333334" />
+        <entry key="app/src/main/res/layout/content_main.xml" value="0.32708333333333334" />
         <entry key="app/src/main/res/layout/dialog_controls.xml" value="1.0" />
+        <entry key="app/src/main/res/layout/file_item.xml" value="0.32708333333333334" />
+        <entry key="app/src/main/res/menu/image_main.xml" value="0.1" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.20104166666666667" />
+        <entry key="app/src/main/res/xml/preferences.xml" value="0.32708333333333334" />
       </map>
     </option>
   </component>
@@ -15,5 +21,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.5463541666666667" />
+      </ProjectState>
+    </option>
   </component>
 </project>
