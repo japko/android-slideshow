@@ -49,3 +49,4 @@ captures/
 
 # VisualStudio Directory
 .vs/
+/.idea/deploymentTargetDropDown.xml

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--PIPO T9 Padding-->
+    <dimen name="left_pipo">68dp</dimen>
+    <dimen name="right_pipo">42dp</dimen>
+    <dimen name="top_pipo">0dp</dimen>
+    <dimen name="down_pipo">0dp</dimen>
+
+</resources>

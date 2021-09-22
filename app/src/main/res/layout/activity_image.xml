@@ -3,6 +3,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:background="@color/image_background"
+	android:paddingStart="@dimen/left_pipo"
+	android:paddingEnd="@dimen/right_pipo"
+	android:paddingTop="@dimen/top_pipo"
+	android:paddingBottom="@dimen/down_pipo"
 	tools:context="link.standen.michael.slideshow.ImageActivity">
 
 	<ImageView
