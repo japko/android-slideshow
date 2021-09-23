@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
 
 /**
- * A [PreferenceActivity] that presents a set of application settings. On
+ * A [SettingsActivity] that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
  * settings are split by category, with category headers shown to the left of
  * the list of settings.
@@ -45,7 +45,7 @@ class SettingsActivity : AppCompatActivity() {
             val randomOrderPref = findPreference<SwitchPreference>("random_order")
             // Enabling reverse disables random
             reverseOrderPref?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { preference, newValue ->
+                Preference.OnPreferenceChangeListener { _, newValue ->
                     if (java.lang.Boolean.TRUE == newValue) {
                         randomOrderPref?.isChecked = false
                     }
@@ -53,7 +53,7 @@ class SettingsActivity : AppCompatActivity() {
                 }
             // Enabling random disables reverse
             randomOrderPref?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { preference, newValue ->
+                Preference.OnPreferenceChangeListener { _, newValue ->
                     if (java.lang.Boolean.TRUE == newValue) {
                         reverseOrderPref?.isChecked = false
                     }
@@ -63,7 +63,7 @@ class SettingsActivity : AppCompatActivity() {
             val autoStartPref = findPreference<SwitchPreference>("auto_start")
             // Disabling remember location disables auto start
             rememberLocationPref?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { preference, newValue ->
+                Preference.OnPreferenceChangeListener { _, newValue ->
                     if (java.lang.Boolean.FALSE == newValue) {
                         autoStartPref?.isChecked = false
                     }
@@ -74,7 +74,7 @@ class SettingsActivity : AppCompatActivity() {
             val gifPref = findPreference<SwitchPreference>("enable_gif_support")
             // Disabling glide support disables preloading and GIF support
             glideSupportPref?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { preference, newValue ->
+                Preference.OnPreferenceChangeListener { _, newValue ->
                     if (java.lang.Boolean.FALSE == newValue) {
                         preloadPref?.isChecked = false
                         gifPref?.isChecked = false
@@ -85,7 +85,7 @@ class SettingsActivity : AppCompatActivity() {
             val imageDetailsDuringPref = findPreference<SwitchPreference>("image_details_during")
             // Disabling remember location disables auto start
             imageDetailsPref?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { preference, newValue ->
+                Preference.OnPreferenceChangeListener { _, newValue ->
                     if (java.lang.Boolean.FALSE == newValue) {
                         imageDetailsDuringPref?.isChecked = false
                     }
@@ -120,12 +120,11 @@ class SettingsActivity : AppCompatActivity() {
                 if (preference is ListPreference) {
                     // For list preferences, look up the correct display value in
                     // the preference's 'entries' list.
-                    val listPreference = preference
-                    val index = listPreference.findIndexOfValue(stringValue)
+                    val index = preference.findIndexOfValue(stringValue)
 
                     // Set the summary to reflect the new value.
                     preference.setSummary(
-                        if (index >= 0) listPreference.entries[index] else null
+                        if (index >= 0) preference.entries[index] else null
                     )
                 } else {
                     // For all other preferences, set the summary to the value's

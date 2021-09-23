@@ -4,8 +4,8 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
-import android.util.Log;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -18,8 +18,6 @@ import link.standen.michael.slideshow.model.FileItem;
 import timber.log.Timber;
 
 public class FileItemHelper {
-
-    private static final String TAG = FileItemHelper.class.getName();
 
 	private final Context context;
 
@@ -44,7 +42,7 @@ public class FileItemHelper {
      */
     public List<FileItem> getFileList(@NonNull String currentPath, boolean includeDirectories,
 			boolean includeSubDirectories){
-        Timber.d("updateFileList currentPath: " + currentPath);
+        Timber.d("updateFileList currentPath: %s", currentPath);
 
         // Create file list
         List<FileItem> fileList = new ArrayList<>();

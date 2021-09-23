@@ -2,16 +2,14 @@ package link.standen.michael.slideshow.strategy.image.custom;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+
 import androidx.exifinterface.media.ExifInterface;
-import android.util.Log;
 
 import java.io.IOException;
 
 import timber.log.Timber;
 
 public class CustomRotateDimenTransformation {
-
-	private static final String TAG = CustomRotateDimenTransformation.class.getName();
 
 	// see https://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
 	private static final int[] EXIF_ORIENTATION_TO_ROTATION = new int[]{-1, 0, 0, 180, 180, 90, 90, 270, 270};

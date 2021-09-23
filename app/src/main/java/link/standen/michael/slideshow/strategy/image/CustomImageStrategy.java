@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.widget.ImageView;
 
 import javax.microedition.khronos.opengles.GL11;
@@ -18,8 +17,6 @@ import timber.log.Timber;
  * This was the original implementation before Glide was added.
  */
 public class CustomImageStrategy implements ImageStrategy {
-
-	private static final String TAG = CustomImageStrategy.class.getName();
 
 	private ImageStrategyCallback callback;
 

@@ -28,7 +28,7 @@ public class GlideRotateDimenTransformation extends BitmapTransformation {
 
 	@Override
 	protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
-        Timber.d(String.format("Height: %d Width: %d", toTransform.getHeight(), toTransform.getWidth()));
+        Timber.d("Height: %d Width: %d", toTransform.getHeight(), toTransform.getWidth());
 		if (toTransform.getHeight() >= toTransform.getWidth()){
 			// Perform fit center here on un-rotated image.
 			toTransform = TransformationUtils.fitCenter(pool, toTransform, outWidth, outHeight);

@@ -4,21 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.widget.ListView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
-
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import java.io.File;
 
@@ -144,17 +138,14 @@ public class MainActivity extends BaseActivity {
 
 		ListView listView = findViewById(android.R.id.list);
 		listView.setAdapter(new FileItemArrayAdapter(this, fileList));
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				FileItem fileItem = ((FileItemViewHolder) view.getTag()).getFileItem();
-				if (fileItem.getIsDirectory()) {
-					currentPath = fileItem.getPath();
-					updateListView();
-				} else if (fileItem.getIsSpecial() || new FileItemHelper(MainActivity.this).isImage(fileItem)){
-					// Only open images
-					startSlideshowAt(currentPath, fileItem.getPath(), false);
-				}
+		listView.setOnItemClickListener((parent, view, position, id) -> {
+			FileItem fileItem = ((FileItemViewHolder) view.getTag()).getFileItem();
+			if (fileItem.getIsDirectory()) {
+				currentPath = fileItem.getPath();
+				updateListView();
+			} else if (fileItem.getIsSpecial() || new FileItemHelper(MainActivity.this).isImage(fileItem)){
+				// Only open images
+				startSlideshowAt(currentPath, fileItem.getPath(), false);
 			}
 		});
 	}
@@ -165,7 +156,7 @@ public class MainActivity extends BaseActivity {
 	 * @param filePath The file path
 	 */
 	private void startSlideshowAt(String folderPath, String filePath, boolean autoStart){
-		Timber.i(String.format("Calling slideshow at %s %s", folderPath, filePath));
+		Timber.i("Calling slideshow at %s %s", folderPath, filePath);
 		Intent intent = new Intent(MainActivity.this, ImageActivity.class);
 		intent.putExtra("currentPath", folderPath);
 		intent.putExtra("imagePath", filePath);

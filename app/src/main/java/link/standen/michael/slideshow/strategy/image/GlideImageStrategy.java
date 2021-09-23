@@ -18,7 +18,7 @@ import com.bumptech.glide.request.target.Target;
 import link.standen.michael.slideshow.R;
 import link.standen.michael.slideshow.model.FileItem;
 import link.standen.michael.slideshow.strategy.image.glide.GlideRotateDimenTransformation;
-import link.standen.michael.slideshow.util.CropSidesTransformation;
+import link.standen.michael.slideshow.strategy.image.glide.CropSidesTransformation;
 import timber.log.Timber;
 
 public class GlideImageStrategy implements ImageStrategy {

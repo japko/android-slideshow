@@ -1,4 +1,4 @@
-package link.standen.michael.slideshow.util;
+package link.standen.michael.slideshow.strategy.image.glide;
 
 
 import android.graphics.Bitmap;

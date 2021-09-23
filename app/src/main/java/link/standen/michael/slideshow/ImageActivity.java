@@ -2,7 +2,6 @@ package link.standen.michael.slideshow;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -13,7 +12,6 @@ import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.text.format.Formatter;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -52,7 +50,6 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	private int firstImagePosition;
 
 	private boolean isRunning = false;
-	private boolean inPipMode = false;
 
 	private static boolean STOP_ON_COMPLETE;
 	private static boolean PAUSE_ON_COMPLETE;
@@ -67,8 +64,6 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	private static boolean DELETE_WARNING;
 
 	private static final int LOCATION_DETAIL_MAX_LENGTH = 35;
-
-	private static final boolean SUPPORTS_PIP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
 
 	// Loading warnings
 	private static final int LONG_LOAD_WARNING_DELAY = 5000;
@@ -97,12 +92,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 					loadingSnackbar = Snackbar.make(isRunning ? snackbarPlayingView : snackbarStoppedView,
 							getResources().getString(R.string.long_loading_warning, path),
 							Snackbar.LENGTH_INDEFINITE);
-					loadingSnackbar.setAction(R.string.long_loading_skip_action, new View.OnClickListener() {
-						@Override
-						public void onClick(View view) {
-							followingImage(false);
-						}
-					});
+					loadingSnackbar.setAction(R.string.long_loading_skip_action, view -> followingImage(false));
 					loadingSnackbar.show();
 				}
 			}
@@ -115,7 +105,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		public void run() {
 			int nextPos = followingImagePosition();
 			if (nextPos == firstImagePosition) {
-				if (STOP_ON_COMPLETE && !inPipMode) {
+				if (STOP_ON_COMPLETE) {
 					show();
 				} else if (PAUSE_ON_COMPLETE) {
 					stopSlideshow();
@@ -149,7 +139,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 					| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 					| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-			if (IMAGE_DETAILS_DURING && !inPipMode) {
+			if (IMAGE_DETAILS_DURING) {
 				mDetailsView.setVisibility(View.VISIBLE);
 			}
 
@@ -171,12 +161,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		}
 	};
 	private boolean mVisible;
-	private final Runnable mHideRunnable = new Runnable() {
-		@Override
-		public void run() {
-			hide();
-		}
-	};
+	private final Runnable mHideRunnable = this::hide;
 
 	private boolean userInputAllowed = true;
 
@@ -322,9 +307,6 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		}
 		firstImagePosition = imagePosition;
 
-		Timber.v(String.format("First item is at index: %s", imagePosition));
-		Timber.v(String.format("File list has size of: %s", fileList.size()));
-
 		// Show the first image
 		loadImage(imagePosition, false);
 	}
@@ -357,41 +339,8 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	@Override
 	protected void onPause(){
 		super.onPause();
-
-		if (!SUPPORTS_PIP || !inPipMode) {
-			// Stop slideshow
-			show();
-		}
-	}
-
-	/**
-	 * Swapping between picture in picture mode starts and stops the slideshow.
-	 */
-	@Override
-	public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
-		super.onPictureInPictureModeChanged(isInPictureInPictureMode);
-		inPipMode = isInPictureInPictureMode;
-		if (inPipMode) {
-			hide();
-		} else {
-			show();
-			// Force reloading image at full dimensions
-			loadImage(imagePosition, false);
-		}
-	}
-
-	/**
-	 * Starts picture in picture mode
-	 * @param toast If picture in picture is not supported, toast determines if a toast is displayed
-	 */
-	private void startPictureInPictureMode(boolean toast){
-		if (SUPPORTS_PIP) {
-			//noinspection deprecation
-			this.enterPictureInPictureMode();
-			mDetailsView.setVisibility(View.GONE);
-		} else if (toast) {
-			Toast.makeText(this, R.string.no_picture_in_picture, Toast.LENGTH_LONG).show();
-		}
+		// Stop slideshow
+		show();
 	}
 
 	/**
@@ -400,24 +349,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.image_main, menu);
-		if (!SUPPORTS_PIP){
-			menu.findItem(R.id.action_picture_in_picture).setVisible(false);
-		}
 		return true;
-	}
-
-	/**
-	 * Handle image activity specific options menu
-	 */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-
-		if (id == R.id.action_picture_in_picture) {
-			this.startPictureInPictureMode(true);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	/**
@@ -428,30 +360,30 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		// Load preferences
 		Timber.d("Loaded preferences:");
 		SLIDESHOW_DELAY = (int) (Float.parseFloat(preferences.getString("slide_delay", "3")) * 1000);
-		Timber.d(String.format("SLIDESHOW_DELAY: %d", SLIDESHOW_DELAY));
+		Timber.d("SLIDESHOW_DELAY: %d", SLIDESHOW_DELAY);
 		REVERSE_ORDER = preferences.getBoolean("reverse_order", false);
-		Timber.d(String.format("REVERSE_ORDER: %b", REVERSE_ORDER));
+		Timber.d("REVERSE_ORDER: %b", REVERSE_ORDER);
 		RANDOM_ORDER = preferences.getBoolean("random_order", false);
-		Timber.d(String.format("RANDOM_ORDER: %b", RANDOM_ORDER));
+		Timber.d("RANDOM_ORDER: %b", RANDOM_ORDER);
 		REFRESH_FOLDER = preferences.getBoolean("refresh_folder", false);
-		Timber.d(String.format("REFRESH_FOLDER: %b", REFRESH_FOLDER));
+		Timber.d("REFRESH_FOLDER: %b", REFRESH_FOLDER);
 		IMAGE_DETAILS = preferences.getBoolean("image_details", false);
-		Timber.d(String.format("IMAGE_DETAILS: %b", IMAGE_DETAILS));
+		Timber.d("IMAGE_DETAILS: %b", IMAGE_DETAILS);
 		IMAGE_DETAILS_DURING = preferences.getBoolean("image_details_during", false);
-		Timber.d(String.format("IMAGE_DETAILS_DURING: %b", IMAGE_DETAILS_DURING));
+		Timber.d("IMAGE_DETAILS_DURING: %b", IMAGE_DETAILS_DURING);
 		SKIP_LONG_LOAD = preferences.getBoolean("skip_long_load", false);
-		Timber.d(String.format("SKIP_LONG_LOAD: %b", SKIP_LONG_LOAD));
+		Timber.d("SKIP_LONG_LOAD: %b", SKIP_LONG_LOAD);
 		PRELOAD_IMAGES = preferences.getBoolean("preload_images", true);
-		Timber.d(String.format("PRELOAD_IMAGES: %b", PRELOAD_IMAGES));
+		Timber.d("PRELOAD_IMAGES: %b", PRELOAD_IMAGES);
 		DELETE_WARNING = preferences.getBoolean("delete_warning", true);
-		Timber.d(String.format("DELETE_WARNING: %b", DELETE_WARNING));
+		Timber.d("DELETE_WARNING: %b", DELETE_WARNING);
 		// List prefs
 		int action_on_complete = Arrays.asList(getResources().getStringArray(R.array.pref_list_values_action_on_complete)).indexOf(
 				preferences.getString("action_on_complete", getResources().getString(R.string.pref_default_value_action_on_complete)));
 		STOP_ON_COMPLETE = action_on_complete == 1;
-		Timber.d(String.format("STOP_ON_COMPLETE: %b", STOP_ON_COMPLETE));
+		Timber.d("STOP_ON_COMPLETE: %b", STOP_ON_COMPLETE);
 		PAUSE_ON_COMPLETE = action_on_complete == 2;
-		Timber.d(String.format("STOP_ON_COMPLETE: %b", PAUSE_ON_COMPLETE));
+		Timber.d("STOP_ON_COMPLETE: %b", PAUSE_ON_COMPLETE);
 
 		// Show/Hide the image details that are shown during pause
 		if (!IMAGE_DETAILS){
@@ -629,24 +561,24 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		}
 		((TextView)findViewById(R.id.image_detail_location1)).setText(location);
 		((TextView)findViewById(R.id.image_detail_location2)).setText(location);
-		Timber.d(String.format("Current image location: %s", location));
+		Timber.d("Current image location: %s", location);
 		// Dimensions
 		String dimensions = getResources().getString(R.string.image_detail_dimensions, width, height);
 		((TextView)findViewById(R.id.image_detail_dimensions1)).setText(dimensions);
 		((TextView)findViewById(R.id.image_detail_dimensions2)).setText(dimensions);
-		Timber.d(String.format("Current image dimensions: %s", dimensions));
+		Timber.d("Current image dimensions: %s", dimensions);
 		// Size
 		String size = getResources().getString(R.string.image_detail_size,
 				Formatter.formatShortFileSize(this, file.length()));
 		((TextView)findViewById(R.id.image_detail_size1)).setText(size);
 		((TextView)findViewById(R.id.image_detail_size2)).setText(size);
-		Timber.d(String.format("Current image size: %s", size));
+		Timber.d("Current image size: %s", size);
 		// Modified
 		String modified = getResources().getString(R.string.image_detail_modified,
 				DateFormat.getMediumDateFormat(this).format(file.lastModified()));
 		((TextView)findViewById(R.id.image_detail_modified1)).setText(modified);
 		((TextView)findViewById(R.id.image_detail_modified2)).setText(modified);
-		Timber.d(String.format("Current image modified: %s", modified));
+		Timber.d("Current image modified: %s", modified);
 
 		// Save this spot
 		saveCurrentImagePath();
@@ -660,19 +592,11 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.delete_dialog_title);
 			builder.setMessage(R.string.delete_dialog_message);
-			builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					doDelete();
-				}
+			builder.setPositiveButton(android.R.string.yes, (dialog, which) -> {
+				dialog.dismiss();
+				doDelete();
 			});
-			builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-			});
+			builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss());
 			builder.create().show();
 		} else {
 			doDelete();

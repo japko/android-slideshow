@@ -3,15 +3,14 @@ package link.standen.michael.slideshow.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -29,8 +28,6 @@ import link.standen.michael.slideshow.model.FileItemViewHolder;
  * Class for managing lists of file items.
  */
 public class FileItemArrayAdapter extends ArrayAdapter<FileItem> {
-
-	private static final String TAG = FileItemArrayAdapter.class.getName();
 
 	private final Context context;
 	private final int resourceId;
@@ -68,8 +65,8 @@ public class FileItemArrayAdapter extends ArrayAdapter<FileItem> {
 			assert inflater != null;
 			view = inflater.inflate(resourceId, null);
 			holder = new FileItemViewHolder();
-			holder.setTextView((TextView) view.findViewById(R.id.file_name));
-			holder.setImageView((ImageView) view.findViewById(R.id.file_image));
+			holder.setTextView(view.findViewById(R.id.file_name));
+			holder.setImageView(view.findViewById(R.id.file_image));
 			view.setTag(holder);
 		} else {
 			holder = (FileItemViewHolder) view.getTag();
