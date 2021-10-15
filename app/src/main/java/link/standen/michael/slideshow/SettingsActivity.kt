@@ -3,7 +3,10 @@ package link.standen.michael.slideshow
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.*
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 
 /**
  * A [SettingsActivity] that presents a set of application settings. On
@@ -30,6 +33,14 @@ class SettingsActivity : AppCompatActivity() {
             .replace(R.id.frame_fragment, SlideshowPreferenceFragment())
             .commit()
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     /**
@@ -66,28 +77,6 @@ class SettingsActivity : AppCompatActivity() {
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     if (java.lang.Boolean.FALSE == newValue) {
                         autoStartPref?.isChecked = false
-                    }
-                    true
-                }
-            val glideSupportPref = findPreference<SwitchPreference>("glide_image_strategy")
-            val preloadPref = findPreference<SwitchPreference>("preload_images")
-            val gifPref = findPreference<SwitchPreference>("enable_gif_support")
-            // Disabling glide support disables preloading and GIF support
-            glideSupportPref?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _, newValue ->
-                    if (java.lang.Boolean.FALSE == newValue) {
-                        preloadPref?.isChecked = false
-                        gifPref?.isChecked = false
-                    }
-                    true
-                }
-            val imageDetailsPref = findPreference<SwitchPreference>("image_details")
-            val imageDetailsDuringPref = findPreference<SwitchPreference>("image_details_during")
-            // Disabling remember location disables auto start
-            imageDetailsPref?.onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _, newValue ->
-                    if (java.lang.Boolean.FALSE == newValue) {
-                        imageDetailsDuringPref?.isChecked = false
                     }
                     true
                 }

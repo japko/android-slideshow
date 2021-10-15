@@ -12,4 +12,9 @@
 		android:orderInCategory="250"
 		android:title="@string/action_controls"
 		app:showAsAction="never"/>
+	<item
+		android:id="@+id/action_close"
+		android:orderInCategory="300"
+		android:title="Zamknij aplikację"
+		app:showAsAction="never"/>
 </menu>

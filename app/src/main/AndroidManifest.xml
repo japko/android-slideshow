@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="false"
@@ -30,11 +31,8 @@
         </activity>
         <activity
             android:name=".ImageActivity"
-            android:configChanges="screenSize|smallestScreenSize|keyboardHidden|screenLayout"
             android:label="@string/title_activity_image"
             android:parentActivityName=".MainActivity"
-            android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -54,6 +52,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <receiver android:name=".AutoRunReceiver"/>
+        <receiver android:name=".AutoShutdownReceiver"/>
 
         <receiver
             android:name=".util.AutostartOnBootReceiver"

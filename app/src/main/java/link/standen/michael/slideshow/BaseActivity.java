@@ -63,6 +63,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 		} else if (id == R.id.action_controls) {
 			new ControlsDialog().show(getSupportFragmentManager(), null);
 			return true;
+		} else if (id == R.id.action_close) {
+			this.moveTaskToBack(true);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

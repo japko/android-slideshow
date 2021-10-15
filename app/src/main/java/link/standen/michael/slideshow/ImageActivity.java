@@ -18,8 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -153,10 +153,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		@Override
 		public void run() {
 			// Delayed display of UI elements
-			ActionBar actionBar = getSupportActionBar();
-			if (actionBar != null) {
-				actionBar.show();
-			}
+			mToolbar.setVisibility(View.VISIBLE);
 			mControlsView.setVisibility(View.VISIBLE);
 		}
 	};
@@ -164,6 +161,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	private final Runnable mHideRunnable = this::hide;
 
 	private boolean userInputAllowed = true;
+	private Toolbar mToolbar;
 
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
@@ -171,12 +169,13 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_image);
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
 
 		mVisible = true;
+
+		mToolbar = findViewById(R.id.toolbar);
+		setSupportActionBar(mToolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		mControlsView = findViewById(R.id.fullscreen_content_controls);
 		mContentView = findViewById(R.id.fullscreen_content);
 		mDetailsView = findViewById(R.id.image_details1); // Visible during slideshow play
@@ -652,10 +651,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 
 	private void hide() {
 		// Hide UI first
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.hide();
-		}
+		mToolbar.setVisibility(View.GONE);
 		mControlsView.setVisibility(View.GONE);
 		mVisible = false;
 
