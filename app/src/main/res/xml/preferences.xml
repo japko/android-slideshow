@@ -6,6 +6,12 @@
 		android:summary="Przytnij obraz po bokach by wypełnić jak najwięcej ramki"
 		android:title="Wypełnij ekran"/>
 
+	<EditTextPreference
+		android:defaultValue="30"
+		android:key="picture_timeout"
+		android:summary=""
+		android:title="Czas pokazywania jednego zdjęcia"/>
+
 	<SwitchPreference
 		android:defaultValue="true"
 		android:key="show_thumbnails"

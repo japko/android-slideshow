@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import link.standen.michael.slideshow.dialog.ControlsDialog;
 import link.standen.michael.slideshow.model.FileItem;
 
 /**
@@ -59,9 +58,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 			return true;
 		} else if (id == R.id.action_settings) {
 			startSettingsActivity();
-			return true;
-		} else if (id == R.id.action_controls) {
-			new ControlsDialog().show(getSupportFragmentManager(), null);
 			return true;
 		} else if (id == R.id.action_close) {
 			this.moveTaskToBack(true);

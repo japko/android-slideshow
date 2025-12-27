@@ -53,7 +53,6 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 
 	private static boolean STOP_ON_COMPLETE;
 	private static boolean PAUSE_ON_COMPLETE;
-	private static boolean REVERSE_ORDER;
 	private static boolean RANDOM_ORDER;
 	private static boolean REFRESH_FOLDER;
 	private static int SLIDESHOW_DELAY;
@@ -222,7 +221,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 			@Override
 			public void onSwipeLeft() {
 				if (checkUserInputAllowed()) {
-					nextImage(true, false);
+					nextImage(false);
 					startSlideshowIfFullscreen();
 				}
 			}
@@ -230,7 +229,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 			@Override
 			public void onSwipeRight() {
 				if (checkUserInputAllowed()) {
-					nextImage(false, false);
+					nextImage(false);
 					startSlideshowIfFullscreen();
 				}
 			}
@@ -275,7 +274,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 
 		// Set up image list
 		fileList = new FileItemHelper(this).getFileList(currentPath, false, imagePath == null);
-		if (fileList.size() == 0){
+		if (fileList.isEmpty()){
 			// No files to view. Exit
 			Timber.i("No files in list.");
 			Toast.makeText(this, R.string.toast_no_files, Toast.LENGTH_SHORT).show();
@@ -295,7 +294,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		// Find the selected image position
 		if (imagePath == null) {
 			imagePosition = 0;
-			nextImage(true, true);
+			nextImage(true);
 		} else {
 			for (int i = 0; i < fileList.size(); i++) {
 				if (imagePath.equals(fileList.get(i).getPath())) {
@@ -335,7 +334,14 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		startSlideshowIfFullscreen();
 	}
 
-	@Override
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if(mVisible)
+            hide();
+    }
+
+    @Override
 	protected void onPause(){
 		super.onPause();
 		// Stop slideshow
@@ -358,10 +364,8 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		// Load preferences
 		Timber.d("Loaded preferences:");
-		SLIDESHOW_DELAY = (int) (Float.parseFloat(preferences.getString("slide_delay", "3")) * 1000);
+		SLIDESHOW_DELAY = (int) (Float.parseFloat(preferences.getString("picture_timeout", "30")) * 1000);
 		Timber.d("SLIDESHOW_DELAY: %d", SLIDESHOW_DELAY);
-		REVERSE_ORDER = preferences.getBoolean("reverse_order", false);
-		Timber.d("REVERSE_ORDER: %b", REVERSE_ORDER);
 		RANDOM_ORDER = preferences.getBoolean("random_order", false);
 		Timber.d("RANDOM_ORDER: %b", RANDOM_ORDER);
 		REFRESH_FOLDER = preferences.getBoolean("refresh_folder", false);
@@ -408,8 +412,8 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	/**
 	 * Show the next image.
 	 */
-	private void nextImage(boolean forwards, boolean preload){
-		nextImage(nextImagePosition(forwards), preload);
+	private void nextImage(boolean preload){
+		nextImage(nextImagePosition(), preload);
 	}
 
 	/**
@@ -445,17 +449,17 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	 * This method handles whether or not the slideshow is in reverse order.
 	 */
 	private void followingImage(boolean preload){
-		nextImage(!REVERSE_ORDER, preload);
+		nextImage(preload);
 	}
 
 	/**
 	 * Gets the position of the next image.
 	 */
-	private int nextImagePosition(boolean forwards){
+	private int nextImagePosition(){
 		int newPosition = imagePosition;
 
 		do {
-			newPosition += forwards ? 1 : -1;
+			newPosition += 1;
 			if (newPosition < 0){
 				newPosition = fileList.size() - 1;
 			}
@@ -471,7 +475,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 	 * This method handles whether or not the slideshow is in reverse order.
 	 */
 	private int followingImagePosition(){
-		return nextImagePosition(!REVERSE_ORDER);
+		return nextImagePosition();
 	}
 
 	/**
@@ -611,7 +615,7 @@ public class ImageActivity extends BaseActivity implements ImageStrategy.ImageSt
 			fileList.remove(item);
 			Toast.makeText(ImageActivity.this, R.string.image_deleted, Toast.LENGTH_SHORT).show();
 			// Show next image
-			imagePosition = imagePosition + (REVERSE_ORDER ? 1 : -1);
+			imagePosition = imagePosition + 1;
 			followingImage(false);
 		} else {
 			Toast.makeText(ImageActivity.this, R.string.image_not_deleted, Toast.LENGTH_SHORT).show();

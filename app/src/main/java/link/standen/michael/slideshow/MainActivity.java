@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity {
 		if (preferences.getBoolean("remember_location", false)){
 			// Override using remembered location
 			currentPath = preferences.getString("remembered_location", currentPath);
-			if (preferences.getBoolean("auto_start", false)){
+			if (preferences.getBoolean("auto_start", false) && savedInstanceState == null){
 				// Start the slideshow automatically
 				startSlideshowAt(currentPath, preferences.getString("remembered_image", null), true);
 				return;

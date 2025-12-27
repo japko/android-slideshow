@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
+    namespace = "link.standen.michael.slideshow"
     compileSdkVersion 31
     buildToolsVersion '31.0.0'
     defaultConfig {
@@ -20,6 +21,11 @@ android {
     }
     lintOptions {
         disable 'MissingTranslation'
+    }
+
+    compileOptions {
+        sourceCompatibility = 21
+        targetCompatibility = 21
     }
 }
 
